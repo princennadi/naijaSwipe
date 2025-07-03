@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TinderCard from 'react-tinder-card';
 import { Toaster, toast } from 'react-hot-toast';
 import { properties } from './data/properties';
@@ -13,6 +14,7 @@ function App() {
   const [history, setHistory] = useState([]);
   const [viewingLikes, setViewingLikes] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     localStorage.setItem('likedProperties', JSON.stringify(liked));
@@ -52,24 +54,40 @@ function App() {
 
   return (
     <div className={`${darkMode ? 'dark' : ''}`}>
+      {/* Sticky Top Navigation Bar */}
+      <nav className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center p-4 shadow-md">
+        <h1
+          onClick={() => navigate('/')}
+          className="cursor-pointer text-xl font-bold text-blue-700 dark:text-blue-300"
+        >
+          🏡 ShortLet
+        </h1>
+        <div className="flex space-x-4">
+          <button
+            onClick={() => setViewingLikes(false)}
+            className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600"
+          >
+            Home
+          </button>
+          <button
+            onClick={() => setViewingLikes(true)}
+            className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600"
+          >
+            Liked
+          </button>
+          <button
+            onClick={toggleDarkMode}
+            className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600"
+          >
+            {darkMode ? '🌞' : '🌙'}
+          </button>
+        </div>
+      </nav>
+
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-6 flex flex-col items-center">
 
         {/* Toast Notifications */}
         <Toaster position="top-center" reverseOrder={false} />
-
-        {/* Header */}
-        <header className="w-full max-w-xl flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-blue-700 dark:text-blue-300">🏡 SwipeNest</h1>
-            <span className="text-sm text-gray-500 dark:text-gray-400">Find your next home</span>
-          </div>
-          <button
-            onClick={toggleDarkMode}
-            className="bg-gray-200 dark:bg-gray-700 text-sm px-3 py-1 rounded-xl"
-          >
-            {darkMode ? 'Light Mode' : 'Dark Mode'}
-          </button>
-        </header>
 
         {!viewingLikes ? (
           <>
@@ -100,8 +118,6 @@ function App() {
               <button
                 onClick={() => setViewingLikes(true)}
                 className="bg-blue-700 hover:bg-blue-300 text-white px-4 py-2 rounded-xl shadow"
-                // underneath is to make the code look like a hyperlink.
-                //className="underline text-blue-700 dark:text-blue-300 hover:text-blue-500"
               >
                 View Liked Properties ({liked.length})
               </button>
