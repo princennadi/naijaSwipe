@@ -4,6 +4,8 @@ import TinderCard from 'react-tinder-card';
 import { Toaster, toast } from 'react-hot-toast';
 import { properties } from './data/properties';
 import PropertyCard from './components/PropertyCard';
+import { Link } from 'react-router-dom'; // add this at the top if not already there
+
 
 function App() {
   const [index, setIndex] = useState(0);
@@ -131,7 +133,9 @@ function App() {
             ) : (
               liked.map((property) => (
                 <div key={property.id} className="mb-6 relative">
-                  <PropertyCard property={property} />
+                  <Link to={`/property/${property.id}`}>
+                    <PropertyCard property = {property} />
+                  </Link>
                   <button
                     onClick={() => removeLiked(property.id)}
                     className="mt-2 bg-red-500 hover:bg-red-400 text-white px-3 py-1 rounded shadow-sm"
