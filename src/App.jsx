@@ -4,10 +4,12 @@ import TinderCard from 'react-tinder-card';
 import { Toaster, toast } from 'react-hot-toast';
 import { properties } from './data/properties';
 import PropertyCard from './components/PropertyCard';
-import { Link } from 'react-router-dom'; // add this at the top if not already there
+import { Link } from 'react-router-dom'; 
+
 
 
 function App() {
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [index, setIndex] = useState(0);
   const [liked, setLiked] = useState(() => {
     const stored = localStorage.getItem('likedProperties');
@@ -63,7 +65,15 @@ function App() {
           className="cursor-pointer text-xl font-bold text-blue-700 dark:text-blue-300"
         >
           🏡 ShortLet
+          
         </h1>
+        <button
+          onClick={() => setShowLoginModal(true)}
+          className="text-sm text-blue-700 dark:text-blue-300 hover:underline"
+          >
+          Login
+        </button>
+
         <div className="flex space-x-4">
           <button
             onClick={() => setViewingLikes(false)}
@@ -154,6 +164,37 @@ function App() {
           </div>
         )}
       </div>
+      {showLoginModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-80">
+      <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">Login</h2>
+      <input
+        type="email"
+        placeholder="Email"
+        className="w-full px-3 py-2 mb-3 border border-gray-300 dark:border-gray-600 rounded"
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        className="w-full px-3 py-2 mb-4 border border-gray-300 dark:border-gray-600 rounded"
+      />
+      <div className="flex justify-between">
+        <button
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500"
+        >
+          Log In
+        </button>
+        <button
+          onClick={() => setShowLoginModal(false)}
+          className="text-gray-500 hover:underline"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
