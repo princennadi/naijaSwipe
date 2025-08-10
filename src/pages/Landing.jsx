@@ -47,6 +47,13 @@ const Landing = () => {
     </button>
 
     <button
+      onClick={() => navigate('/dashboard')}
+      className="text-sm bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-xl"
+    >
+      Host Property
+    </button>
+
+    <button
       onClick={handleSearch}
       className="text-sm bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl"
     >
@@ -55,27 +62,7 @@ const Landing = () => {
   </div>
 </nav>
 
-      {/* <nav className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center p-4 shadow-md">
-        <h1
-          onClick={() => navigate('/')}
-          className="cursor-pointer text-xl text-3xl font-bold text-blue-700 dark:text-blue-300"
-        >
-          🏡 ShortLet
-        </h1>
-         <button
-            onClick={() => setShowLoginModal(true)}
-            className="text-sm bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl"
-          >
-            Login
-        </button>
 
-        <button
-          onClick={handleSearch}
-          className="text-sm bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl"
-        >
-          Browse
-        </button>
-      </nav> */}
 
       <div className="p-6 text-center">
         <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">

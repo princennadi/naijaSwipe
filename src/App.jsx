@@ -88,6 +88,12 @@ function App() {
             Liked
           </button>
           <button
+            onClick={() => navigate('/dashboard')}
+            className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600"
+          >
+            Dashboard
+          </button>
+          <button
             onClick={toggleDarkMode}
             className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600"
           >
