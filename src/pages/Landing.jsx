@@ -2,67 +2,66 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { properties } from '../data/properties';
 import PropertyCard from '../components/PropertyCard';
-import { Link } from 'react-router-dom'; // add this at the top if not already there
+import UserMenu from '../components/UserMenu';
+import { useAuth } from "../context/AuthContext";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
   const [location, setLocation] = useState('');
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState(1);
-  const isInvalidDate = checkIn && checkOut && new Date(checkIn) > new Date(checkOut);
-  const [showLoginModal, setShowLoginModal] = useState(false);
 
+  const isInvalidDate = checkIn && checkOut && new Date(checkIn) > new Date(checkOut);
 
   const handleSearch = () => {
     navigate('/browse');
   };
-
+function TempOwnerButton() {
+  const { setIsOwner } = useAuth();
+  return <button onClick={() => setIsOwner(true)}>Become Host</button>;
+}
   return (
-    
     <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-y-auto">
       {/* Sticky Header */}
-      <nav
-  className="
-    sticky top-0 z-50
-    bg-white dark:bg-gray-800
-    border-b border-gray-200 dark:border-gray-700
-    flex justify-between items-center
-    p-4 shadow-md
-  "
->
-  <h1
-    onClick={() => navigate('/')}
-    className="cursor-pointer text-xl font-bold text-blue-700 dark:text-blue-300"
-  >
-    🏡 ShortLet
-  </h1>
+      <nav className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center p-4 shadow-md">
+        <h1
+          onClick={() => navigate('/')}
+          className="cursor-pointer text-xl font-bold text-blue-700 dark:text-blue-300"
+        >
+          🏡 ShortLet
+        </h1>
 
-  <div className="flex items-center space-x-2">
-    <button
-      onClick={() => setShowLoginModal(true)}
-      className="text-sm bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl"
-    >
-      Login
-    </button>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={handleSearch}
+            className="text-sm bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl"
+          >
+            Browse
+          </button>
 
-    <button
-      onClick={() => navigate('/dashboard')}
-      className="text-sm bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-xl"
-    >
-      Host Property
-    </button>
-
-    <button
-      onClick={handleSearch}
-      className="text-sm bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl"
-    >
-      Browse
-    </button>
-  </div>
-</nav>
-
-
+          {user ? (
+            <>
+              <button
+                onClick={() => navigate('/dashboard')}
+                className="hidden sm:inline-block text-sm bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-xl"
+              >
+                Host
+              </button>
+              <UserMenu />
+            </>
+          ) : (
+            <button
+              onClick={() => navigate('/login')}
+              className="text-sm bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-xl"
+            >
+              Login
+            </button>
+          )}
+        </div>
+      </nav>
 
       <div className="p-6 text-center">
         <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
@@ -101,11 +100,9 @@ const Landing = () => {
               />
             </div>
             {isInvalidDate && (
-                <p className="text-red-500 text-sm">❌ Check-out must be after check-in.</p>
-              )}
+              <p className="col-span-2 text-red-500 text-sm">❌ Check-out must be after check-in.</p>
+            )}
           </div>
-
-
 
           <div>
             <label className="block text-left mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Guests</label>
@@ -119,11 +116,11 @@ const Landing = () => {
           </div>
 
           <button
-          disabled = {isInvalidDate}
+            disabled={isInvalidDate}
             onClick={handleSearch}
             className={`w-full px-4 py-2 rounded-md text-white ${
-            isInvalidDate ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500'
-            }`} 
+              isInvalidDate ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500'
+            }`}
           >
             Search
           </button>
@@ -140,37 +137,6 @@ const Landing = () => {
           </div>
         </div>
       </div>
-      {showLoginModal && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-80">
-      <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">Login</h2>
-      <input
-        type="email"
-        placeholder="Email"
-        className="w-full px-3 py-2 mb-3 border border-gray-300 dark:border-gray-600 rounded"
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        className="w-full px-3 py-2 mb-4 border border-gray-300 dark:border-gray-600 rounded"
-      />
-      <div className="flex justify-between">
-        <button
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500"
-        >
-          Log In
-        </button>
-        <button
-          onClick={() => setShowLoginModal(false)}
-          className="text-gray-500 hover:underline"
-        >
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
     </div>
   );
 };
