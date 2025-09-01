@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { properties } from '../data/properties';
-import PropertyCard from '../components/PropertyCard';
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import Header from "../components/Header";
+import { properties } from "../data/properties";
+import PropertyCard from "../components/PropertyCard";
 
 function PropertyPage() {
   const { id } = useParams();
@@ -10,39 +11,20 @@ function PropertyPage() {
 
   const property = properties.find((p) => p.id.toString() === id);
 
-  return (
-    <div className={`${darkMode ? 'dark' : ''}`}>
-      {/* Sticky Top Navigation Bar */}
-      <nav className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center p-4 shadow-md">
-        <h1
-          onClick={() => navigate('/')}
-          className="cursor-pointer text-xl font-bold text-blue-700 dark:text-blue-300"
-        >
-          🏡 ShortLet
-        </h1>
-        <div className="flex space-x-4">
-          <button
-            onClick={() => navigate('/')}
-            className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600"
-          >
-            Home
-          </button>
-          <button
-            onClick={() => navigate('/liked')}
-            className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600"
-          >
-            Liked
-          </button>
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            className="text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600"
-          >
-            {darkMode ? '🌞' : '🌙'}
-          </button>
-        </div>
-      </nav>
+  const right = (
+    <button
+      onClick={() => setDarkMode((v) => !v)}
+      className="text-sm text-gray-700 dark:text-gray-200 hover:text-blue-600"
+      title="Toggle dark mode"
+    >
+      {darkMode ? "🌞" : "🌙"}
+    </button>
+  );
 
-      {/* Property Details */}
+  return (
+    <div className={darkMode ? "dark" : ""}>
+      <Header right={right} />
+
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white p-6">
         {property ? (
           <>
@@ -59,10 +41,7 @@ function PropertyPage() {
         ) : (
           <div className="text-center text-red-500">
             <p>Property not found.</p>
-            <button
-              onClick={() => navigate('/')}
-              className="mt-4 text-blue-600 underline"
-            >
+            <button onClick={() => navigate("/")} className="mt-4 text-blue-600 underline">
               Go back home
             </button>
           </div>
