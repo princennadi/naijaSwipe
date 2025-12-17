@@ -20,33 +20,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Landing />} />
           <Route path="/browse" element={<App />} />
           <Route path="/liked" element={<Liked />} />
           <Route path="/property/:id" element={<PropertyPage />} />
-          <Route path="/owner" element={<PropertyOwnerDashboard />} />
-
-
-          {/* 🔐 Owner dashboard (protected) */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute requireOwner>
-                <PropertyOwnerDashboard />
-              </ProtectedRoute>
-            }
-          />
-          {/* (Optional) alias route, remove if you don't want it */}
-          <Route
-            path="/owner"
-            element={
-              <ProtectedRoute requireOwner>
-                <PropertyOwnerDashboard />
-              </ProtectedRoute>
-            }
-          />
-
           <Route path="/login" element={<Login />} />
+
+          {/* Protected Routes */}
           <Route
             path="/profile"
             element={
@@ -62,6 +43,33 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                 <Settings />
               </ProtectedRoute>
             }
+          />
+            <Route
+              path="/host"
+              element={
+                <ProtectedRoute requireOwner>
+                  <PropertyOwnerDashboard />
+                </ProtectedRoute>
+              }
+            />
+          {/* 🔐 Owner Dashboard (Secured) */}
+          <Route
+            path="/owner"
+            element={
+              <ProtectedRoute requireOwner>
+                <PropertyOwnerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          {/* Alias for dashboard */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute requireOwner>
+                <PropertyOwnerDashboard />
+              </ProtectedRoute>
+            }
+            
           />
         </Routes>
       </BrowserRouter>

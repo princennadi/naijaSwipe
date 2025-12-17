@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { properties } from '../data/properties';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom'; // ✅ ADDED Link here
 import PropertyCard from '../components/PropertyCard';
 import UserMenu from '../components/UserMenu';
 import { useAuth } from "../context/AuthContext";
+import { db } from '../firebase';
+import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -13,16 +14,37 @@ const Landing = () => {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState(1);
+  
+  const [featuredProperties, setFeaturedProperties] = useState([]);
 
   const isInvalidDate = checkIn && checkOut && new Date(checkIn) > new Date(checkOut);
 
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const q = query(
+          collection(db, "properties"),
+          orderBy("createdAt", "desc"),
+          limit(6)
+        );
+        const querySnapshot = await getDocs(q);
+        const list = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setFeaturedProperties(list);
+      } catch (error) {
+        console.error("Error fetching featured properties:", error);
+      }
+    };
+
+    fetchProperties();
+  }, []);
+
   const handleSearch = () => {
-    navigate('/browse');
+    navigate('/browse', { state: { location, guests } });
   };
-function TempOwnerButton() {
-  const { setIsOwner } = useAuth();
-  return <button onClick={() => setIsOwner(true)}>Become Host</button>;
-}
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 overflow-y-auto">
       {/* Sticky Header */}
@@ -45,10 +67,10 @@ function TempOwnerButton() {
           {user ? (
             <>
               <button
-                onClick={() => navigate('/dashboard')}
-                className="hidden sm:inline-block text-sm bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-xl"
+                onClick={() => navigate('/owner')}
+                className="text-sm bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-xl"
               >
-                Host
+                Host Property
               </button>
               <UserMenu />
             </>
@@ -127,14 +149,22 @@ function TempOwnerButton() {
         </div>
 
         <div className="w-full max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-6 text-left">Best Selling Properties</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {properties.slice(0, 6).map((property) => (
-              <div key={property.id}>
-                <PropertyCard property={property} />
-              </div>
-            ))}
-          </div>
+          <h2 className="text-2xl font-bold mb-6 text-left">Newest Properties</h2>
+          
+          {featuredProperties.length === 0 ? (
+            <div className="text-gray-500">
+              No properties found. <span className="font-bold cursor-pointer text-blue-600" onClick={() => navigate('/owner')}>Add one now!</span>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {featuredProperties.map((property) => (
+                // ✅ CHANGED: Wrapped in Link
+                <Link key={property.id} to={`/property/${property.id}`} className="block hover:scale-105 transition-transform duration-300">
+                  <PropertyCard property={property} />
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

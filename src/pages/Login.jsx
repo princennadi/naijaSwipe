@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../context/AuthContext";
 import { FcGoogle } from "react-icons/fc";
-import { FaApple } from "react-icons/fa";
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { loginWithGoogle, loginWithApple, loginWithEmail } = useAuth();
+  // Removed loginWithApple from destructuring
+  const { loginWithGoogle, loginWithEmail } = useAuth();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
 
@@ -14,7 +15,7 @@ const Login = () => {
     e.preventDefault();
     try {
       setBusy(true);
-      await loginWithEmail(email, password);
+      await loginWithEmail({ email, password });
       navigate('/');
     } catch (err) {
       alert(err.message || 'Login failed');
@@ -35,18 +36,6 @@ const Login = () => {
     }
   };
 
-  const handleApple = async () => {
-    try {
-      setBusy(true);
-      await loginWithApple();
-      navigate('/');
-    } catch (err) {
-      alert(err.message || 'Apple login failed');
-    } finally {
-      setBusy(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
       <form
@@ -55,26 +44,15 @@ const Login = () => {
       >
         <h2 className="text-2xl font-bold text-center text-blue-600 dark:text-blue-300">Login</h2>
 
-          <button
-            type="button"
-            onClick={handleGoogle}
-            disabled={busy}
-            className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white p-2 rounded-md"
-          >
-            <FcGoogle className="w-5 h-5" />
-            Continue with Google
-          </button>
-
-          <button
-            type="button"
-            onClick={handleApple}
-            disabled={busy}
-            className="w-full flex items-center justify-center gap-2 bg-black text-white p-2 rounded-md"
-          >
-            <FaApple className="w-5 h-5" />
-            Continue with Apple
-          </button>
-
+        <button
+          type="button"
+          onClick={handleGoogle}
+          disabled={busy}
+          className="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white p-2 rounded-md"
+        >
+          <FcGoogle className="w-5 h-5" />
+          Continue with Google
+        </button>
 
         <div className="h-px bg-gray-200 dark:bg-gray-700" />
 
@@ -108,6 +86,7 @@ const Login = () => {
           {busy ? 'Signing in…' : 'Login with Email'}
         </button>
         <button
+          type="button"
           onClick={() => navigate('/')}
           className="w-full bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-md disabled:opacity-60"
         >

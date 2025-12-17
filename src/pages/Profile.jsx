@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import Header from "../components/Header";
 import { useAuth } from "../context/AuthContext";
+// Add these imports to interact with Firestore
+import { doc, updateDoc, serverTimestamp } from "firebase/firestore"; 
+import { db } from "../firebase";
 
 export default function Profile() {
   const { user, updateProfile } = useAuth();
@@ -15,6 +18,30 @@ export default function Profile() {
     .slice(0, 2)
     .join("");
 
+  // Function to upgrade user to Host
+  const becomeHost = async () => {
+    if (!user) return;
+    try {
+      setSaving(true);
+      const userRef = doc(db, "users", user.uid);
+      
+      // Update the role in Firestore
+      await updateDoc(userRef, {
+        role: "host",
+        isHost: true,
+        updatedAt: serverTimestamp(),
+      });
+      
+      alert("Success! You are now a Host. The page will reload.");
+      window.location.reload(); // Reload to refresh AuthContext
+    } catch (error) {
+      console.error(error);
+      alert("Error upgrading account: " + error.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const onSave = async (e) => {
     e.preventDefault();
     setMsg("");
@@ -26,8 +53,6 @@ export default function Profile() {
           photoURL: photoURL.trim() || null,
         });
         setMsg("Profile updated ✅");
-      } else {
-        setMsg("Demo only: wire updateProfile() in AuthContext to persist.");
       }
     } catch {
       setMsg("Failed to update profile. Try again.");
@@ -41,11 +66,21 @@ export default function Profile() {
       <Header />
 
       <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow border border-gray-200/60 dark:border-gray-700 mt-8">
-        <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-gray-700">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Your Profile</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Manage your account info and avatar.
-          </p>
+        <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Your Profile</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Manage your account info and avatar.
+            </p>
+          </div>
+          
+          {/* Developer Button to Become Host */}
+          <button
+            onClick={becomeHost}
+            className="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded border border-emerald-200 hover:bg-emerald-200"
+          >
+            ⚡ Dev: Become Host
+          </button>
         </div>
 
         <form onSubmit={onSave} className="p-6 sm:p-8 space-y-6">
@@ -67,9 +102,6 @@ export default function Profile() {
                 placeholder="https://example.com/me.jpg"
                 className="w-full p-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900"
               />
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Paste a direct link to your profile photo (optional).
-              </p>
             </div>
           </div>
 
