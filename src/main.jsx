@@ -10,6 +10,7 @@ import PropertyOwnerDashboard from "./pages/PropertyOwnerDashboard";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
+import Trips from "./pages/Trips";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
@@ -43,7 +44,17 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                 <Settings />
               </ProtectedRoute>
             }
-          />
+            />
+            <Route
+              path="/trips"
+              element={
+                <ProtectedRoute>
+                  <Trips />
+                </ProtectedRoute>
+              }
+           />
+          
+          
             <Route
               path="/host"
               element={

@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 import { db } from '../firebase';
 import { doc, onSnapshot, addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import PropertyCard from "../components/PropertyCard";
 import { useAuth } from "../context/AuthContext";
 import { Toaster, toast } from "react-hot-toast";
 
@@ -55,7 +54,7 @@ function PropertyPage() {
     try {
       setBookingLoading(true);
       
-      // 1. Create Booking
+      // Save booking to Firestore
       await addDoc(collection(db, "bookings"), {
         propertyId: property.id,
         propertyTitle: property.title,
@@ -72,8 +71,8 @@ function PropertyPage() {
 
       toast.success("Booking Confirmed! 🎉");
       
-      // 2. Redirect (optional)
-      setTimeout(() => navigate("/"), 2000);
+      // Redirect to Trips page after 2 seconds
+      setTimeout(() => navigate("/trips"), 2000);
 
     } catch (error) {
       console.error(error);
@@ -106,7 +105,6 @@ function PropertyPage() {
             
             {/* Left: Property Details */}
             <div className="md:col-span-2 space-y-6">
-               {/* Image Gallery (Simple) */}
                <div className="rounded-xl overflow-hidden shadow-lg h-64 sm:h-96">
                 <img 
                   src={property.images?.[0] || "https://via.placeholder.com/800"} 
